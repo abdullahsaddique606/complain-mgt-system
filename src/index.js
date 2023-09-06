@@ -1,20 +1,23 @@
-import React from 'react';
-import ReactDOM from 'react-dom/client'; 
-import App from './components/ComplainMgt';
-import './index.css'
-import reportWebVitals from './reportWebVitals';
-import { AuthProvider } from './components/authContext';
-import { BrowserRouter as Router } from 'react-router-dom';
+import React from "react";
+import ReactDOM from "react-dom/client";
+import App from "./components/ComplainMgt";
+import "./index.css";
+import reportWebVitals from "./reportWebVitals";
+import { AuthProvider } from "./components/authContext";
+import { BrowserRouter as Router } from "react-router-dom";
+import { NotificationProvider } from "./components/NotificationProviderContext";
 
-const root = ReactDOM.createRoot(document.getElementById('root'));
+const root = ReactDOM.createRoot(document.getElementById("root"));
 root.render(
   <React.StrictMode>
     <Router>
-      <AuthProvider>
-        <App />
-      </AuthProvider>
+      <NotificationProvider>
+        <AuthProvider>
+          <App />
+        </AuthProvider>
+      </NotificationProvider>
     </Router>
-  </React.StrictMode>,
+  </React.StrictMode>
 );
 
 // If you want to start measuring performance in your app, pass a function

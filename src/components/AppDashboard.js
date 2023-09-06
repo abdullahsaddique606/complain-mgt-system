@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useContext } from "react";
 import SideNav from "./SideNav";
 import TableComponent from "./Table";
 import {
@@ -14,6 +14,9 @@ import { useTheme } from "@mui/material/styles";
 import { FaPlus } from "react-icons/fa";
 import ComplainForm from "./AddComplainForm";
 import Filter from "./FilterButtons";
+import { useAuth} from "./authContext";
+import { Navigate, useNavigate } from "react-router-dom";
+import { NotificationContext } from "./NotificationProviderContext";
 
 const Dashboard = () => {
   const [selectedComplain, setSelectedComplain] = useState(null);
@@ -28,17 +31,23 @@ const Dashboard = () => {
 
   
   const theme = useTheme();
+  const {isLoggedIn,login,logout } = useAuth();
+  const notify = useContext(NotificationContext)
   const storedUserData = localStorage.getItem("userData");
   const userData = JSON.parse(storedUserData);
 
   let userID = null;
   let role = null;
   let userName = null;
+  let Email = null;
   if (userData && userData.data.userID) {
     userID = userData.data.userID;
   }
   if (userData && userData.data.userName) {
     userName = userData.data.userName;
+  }
+  if (userData && userData.data.userEmail) {
+    Email = userData.data.userEmail;
   }
   if (userData && userData.data.role) {
     role = userData.data.role;
@@ -52,6 +61,7 @@ const Dashboard = () => {
   const handleDelete = (complaintID, userID) => {
     let userRole = userData.data.role;
     deleteCategory(complaintID, userID, userRole);
+    notify("Complain Deleted")
   };
   useEffect(() => {
     if (role == "Admin") {
@@ -60,6 +70,12 @@ const Dashboard = () => {
       setShowButton(true);
     }
   }, []);
+  const navigate = useNavigate();
+    useEffect(() => {
+        if(isLoggedIn) {
+            navigate("/appdashboard");
+        }
+    }, []);
   const toggleShowForm = () => {
     setToggleForm(!toggleForm);
     setSelectedComplain(null);
@@ -92,6 +108,9 @@ const Dashboard = () => {
               <span className="block text-sm font-bold">
                 Welcome {userName}
               </span>
+              <span className="block text-sm font-bold">
+                Email: {Email}
+              </span>
               <span className="block text-xs font-bold">Login as: {role}</span>
             </div>
           </header>
@@ -103,7 +122,7 @@ const Dashboard = () => {
             <div className="flex justify-start mb-5">
               <Button
                 variant="contained"
-                className="bg-indigo-500 text-white border-none py-2 px-2 rounded-md transition duration-300 ease-in-out transform hover:bg-indigo-600 hover:scale-105"
+                className="bg-indigo-500 text-white border-none py-2 px-2 rounded-md transition duration-300 ease-in-out hover:bg-indigo-600 hover:scale-105"
                 disabled={toggleForm}
                 onClick={toggleShowForm}
                 sx={{
@@ -111,6 +130,8 @@ const Dashboard = () => {
                   color: theme.palette.getContrastText(
                     theme.palette.primary.main
                   ),
+                  textTransform: 'none',
+                  fontWeight: 'bold',
                 }}
               >
                 <FaPlus /> Add Complain

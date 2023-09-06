@@ -1,16 +1,16 @@
-import React,{useState} from 'react';
+import React,{useContext, useState} from 'react';
 import { useForm, Controller } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
 import * as yup from 'yup';
 import { Link } from 'react-router-dom';
 import { RegisterUsers } from '../api/api';
-import Toast from './Toast';
+import CircularProgress from "@mui/material/CircularProgress";
+import { NotificationContext } from './NotificationProviderContext';
 const SignUpForm = () => {
-  const [alertVisible, setAlertVisible] = useState(false);
-  const [alertType, setAlertType] = useState("");
-  const [alertMessage, setAlertMessage] = useState("");
+  const notify = useContext(NotificationContext); 
+  const [isLoading, setIsLoading] = useState(false);
   const validationSchema = yup.object().shape({
-    fullName: yup.string().required('Required field'),
+    fullName: yup.string().required('Required field').matches(/^\S*$/, 'White spaces are not allowed'),
     email: yup.string().required('Required field').email('Enter valid email'),
     contactNumber: yup.number().required('Required field'),
     password: yup.string().required('Required field').matches(
@@ -25,39 +25,35 @@ const SignUpForm = () => {
   });
 
   const onSubmit = async (data) => {
+    setIsLoading(true);
     try {
+      const trimmedFullName = data.fullName.trim();
       const apiData = {
-        userName: data.fullName,
+        userName: trimmedFullName,
         emailAddress: data.email,
         phoneNumber: data.contactNumber.toString(),
         password: data.password,
       };
       const response = await RegisterUsers(apiData); 
-      setAlertType("success");
-      setAlertMessage("Registration Successful! Login First");
-      setAlertVisible(true);
-      // navigate('/login');
+      notify(response.data.message)
       
       console.log('API response:', response.message);
       
     } catch (error) {
-      console.error('API error:', error);
-      setAlertType("error");
-      setAlertMessage(error.response.data.message);
-      setAlertVisible(true);
-      console.log('API response:', error.response.data.message);
-      
+      notify(error.response.data.message)
+      console.log('API response:', error.response.data.message); 
+    } finally {
+      setIsLoading(false); // Set loading state to false when done
     }
   };
 
   return (
     <div className="">
       <div className="bg-white relative lg:py-20">
-      {alertVisible && <Toast type={alertType} message={alertMessage} />}
         <div className="flex flex-col items-center justify-between pt-0 pr-10 pb-0 pl-10 mt-0 mr-auto mb-0 ml-auto max-w-7xl xl:px-5 lg:flex-row">
           <div className="flex flex-col items-center w-full pt-5 pr-10 pb-20 pl-10 lg:pt-20 lg:flex-row">
             <div className="w-full bg-cover relative max-w-md lg:max-w-2xl lg:w-7/12">
-              <h1 className="text-4xl font-medium text-center leading-snug font-serif absolute animate-bounce" style={{ zIndex: 10 }}>
+              <h1 className="text-4xl font-medium text-center leading-snug font-serif absolute" style={{ zIndex: 10 }}>
                 Complain management System
               </h1>
               <div className="flex flex-col items-center justify-center w-full h-full relative lg:pr-10">
@@ -160,9 +156,18 @@ const SignUpForm = () => {
                     <div className="relative">
                       <button
                         type="submit"
-                        className="w-full inline-block pt-4 pr-5 pb-4 pl-5 text-xl font-medium text-center text-white bg-indigo-500 rounded-lg transition duration-200 hover:bg-indigo-600 ease"
+                        className={`w-full inline-block pt-4 pr-5 pb-4 pl-5 text-xl font-medium text-center text-white rounded-lg transition duration-200 ease ${
+                          isLoading ? 'bg-gray-400 cursor-wait' : 'bg-indigo-500 hover:bg-indigo-600'
+                        }`}
+                        disabled={isLoading}
                        >
-                        Sign up
+                        {isLoading ? (
+    <div className="flex items-center justify-center">
+      <CircularProgress size={24} thickness={4} color="inherit" />
+    </div>
+  ) : (
+    'Sign up'
+  )}
                       </button>
                     </div>
                   </div>

@@ -1,16 +1,14 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useContext } from "react";
 import { useForm, Controller } from "react-hook-form";
 import { addComplain, updateComplain } from "../api/api";
 import { yupResolver } from "@hookform/resolvers/yup";
 import * as yup from "yup";
-import Toast from "./Toast";
 import CircularProgress from '@mui/material/CircularProgress';
+import { NotificationContext } from "./NotificationProviderContext";
 
 const ComplainForm = ({ onCloseForm, selectedComplain }) => {
   const [showForm, setShowForm] = useState(true);
-  const [alertVisible, setAlertVisible] = useState(false);
-  const [alertType, setAlertType] = useState("");
-  const [alertMessage, setAlertMessage] = useState("");
+  const notify = useContext(NotificationContext); 
   const [loading, setLoading] = useState(false);
   const validationSchema = yup.object().shape({
     title: yup.string().required("Title is required"),
@@ -50,7 +48,6 @@ const ComplainForm = ({ onCloseForm, selectedComplain }) => {
       }, 3000);
     
     if (selectedComplain != null) {
-        console.log( "Update Clicked")
       const isSuccess = await updateComplain(
         selectedComplain.complaintId,
         newData,
@@ -58,28 +55,19 @@ const ComplainForm = ({ onCloseForm, selectedComplain }) => {
         userRole,
       );
       if (isSuccess) {
-        setAlertType("success");
-        setAlertMessage("Complain Updated Successfully");
-        setAlertVisible(true);
+        notify("Complain Updated")
         onCloseForm();
         reset();
       } else {
-        setAlertType("error");
-        setAlertMessage("Failed to update the complain");
-        setAlertVisible(true);
+        notify("Cannot update complain")
       }
     } else {
-      console.log("Add clicked suceesfully:", { newData });
       const isSucces = await addComplain(newData, userID);
       if (isSucces) {
-        setAlertType("success");
-        setAlertMessage("Complain Added Successfully");
-        setAlertVisible(true);
+        notify("Complain Added")
         onCloseForm();
       } else {
-        setAlertType("error");
-        setAlertMessage("Failed to add the complain");
-        setAlertVisible(true);
+        notify("Cannot Added complain");
       }
     }
   };
@@ -97,7 +85,6 @@ const ComplainForm = ({ onCloseForm, selectedComplain }) => {
   return (
     <div className="flex items-center justify-center p-12">
       <div className="w-full">
-        {alertVisible && <Toast type={alertType} message={alertMessage} />}
         <div className="formbold-form-wrapper mx-auto w-full max-w-[550px] rounded-lg border border-[#e0e0e0] bg-white">
           <div className="flex items-center justify-between rounded-t-lg bg-[#6A64F1] py-4 px-9">
             <h3 className="text-xl font-bold text-white">
