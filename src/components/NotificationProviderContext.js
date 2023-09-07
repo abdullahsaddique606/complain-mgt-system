@@ -17,9 +17,8 @@ export function NotificationProvider(props) {
   return (
     <NotificationContext.Provider value={showNotification}>
       <Snackbar
-        style={{ backgroundColor: 'blue', color: 'white' }}
         anchorOrigin={{ vertical: "top", horizontal: "right" }}
-        autoHideDuration={3000}
+        autoHideDuration={2000}
         open={isOpen}
         onClose={handleClose}
         message={msg}

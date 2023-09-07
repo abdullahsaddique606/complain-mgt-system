@@ -22,14 +22,6 @@ const Dashboard = () => {
   const [selectedComplain, setSelectedComplain] = useState(null);
   const [showButton, setShowButton] = useState(false);
   const [toggleForm, setToggleForm] = useState(false);
-  // const [selectedFilters, setSelectedFilters] = useState({
-  //   type: [],
-  //   complainStatus: [],
-  // });
-  
-  // const [searchValue, setSearchValue] = useState('');
-
-  
   const theme = useTheme();
   const {isLoggedIn,login,logout } = useAuth();
   const notify = useContext(NotificationContext)
@@ -87,13 +79,6 @@ const Dashboard = () => {
     setSelectedComplain(complain);
     setToggleForm(true);
   };
-  // const updateSearchValue = (value) => {
-  //   setSearchValue(value);
-  // };
-
-  // const updateSelectedFilters = (newSelectedFilters) => {
-  //   setSelectedFilters(newSelectedFilters);
-  // };
 
   return (
     <div className="flex">
