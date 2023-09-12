@@ -1,4 +1,4 @@
-import React, { useContext, useState } from "react";
+import React, { useContext } from "react";
 import { useForm, Controller } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 import * as yup from "yup";
@@ -6,15 +6,11 @@ import { LoggedInUser } from "../api/api";
 import { Link } from "react-router-dom";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "./authContext";
-import Toast from "./Toast"
 import { NotificationContext } from "./NotificationProviderContext";
 const Login = () => {
   const { login } = useAuth();
   const navigate = useNavigate();
   const notify = useContext(NotificationContext); 
-  const [alertVisible, setAlertVisible] = useState(false);
-  const [alertType, setAlertType] = useState("");
-  const [alertMessage, setAlertMessage] = useState("");
 
   const validationSchema = yup.object().shape({
     userName: yup.string().required("Required field"),
@@ -25,7 +21,6 @@ const Login = () => {
     handleSubmit,
     control,
     formState: { errors },
-    isValid,
   } = useForm({
     resolver: yupResolver(validationSchema),
   });
@@ -47,7 +42,6 @@ const Login = () => {
   return (
     <div className="">
       <div className="bg-white relative lg:py-20">
-      {/* {alertVisible && <Toast type={alertType} message={alertMessage} />} */}
         <div className="flex flex-col items-center justify-between pt-0 pr-10 pb-0 pl-10 mt-0 mr-auto mb-0 ml-auto max-w-7xl xl:px-5 lg:flex-row">
           <div className="flex flex-col items-center w-full pt-5 pr-10 pb-20 pl-10 lg:pt-20 lg:flex-row">
             <div className="w-full bg-cover relative max-w-md lg:max-w-2xl lg:w-7/12">

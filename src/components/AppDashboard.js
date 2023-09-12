@@ -8,12 +8,9 @@ import {
   deleteCategory,
 } from "../api/api";
 import Button from "@mui/material/Button";
-import SendIcon from "@mui/icons-material/Send";
-import Stack from "@mui/material/Stack";
 import { useTheme } from "@mui/material/styles";
 import { FaPlus } from "react-icons/fa";
 import ComplainForm from "./AddComplainForm";
-import Filter from "./FilterButtons";
 import { useAuth} from "./authContext";
 import { Navigate, useNavigate } from "react-router-dom";
 import { NotificationContext } from "./NotificationProviderContext";
@@ -23,7 +20,7 @@ const Dashboard = () => {
   const [showButton, setShowButton] = useState(false);
   const [toggleForm, setToggleForm] = useState(false);
   const theme = useTheme();
-  const {isLoggedIn,login,logout } = useAuth();
+  const { isLoggedIn } = useAuth();
   const notify = useContext(NotificationContext)
   const storedUserData = localStorage.getItem("userData");
   const userData = JSON.parse(storedUserData);
